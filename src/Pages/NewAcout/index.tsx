@@ -7,13 +7,16 @@ import { useNavigate } from 'react-router-dom'
 export function NewAcout() {
   const router = useNavigate()
   const [values, setValues] = useState({
-    usernameOrEmail: '',
+    username: '',
     password: '',
+    email: '',
+    grants: 'FREE',
   })
 
   const [errors, setErrors] = useState({
-    usernameOrEmail: false,
+    username: false,
     password: false,
+    email: false,
   })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,8 +26,9 @@ export function NewAcout() {
 
   const validateFields = () => {
     const newErrors = {
-      usernameOrEmail: !values.usernameOrEmail,
+      username: !values.username,
       password: !values.password,
+      email: !values.email,
     }
     setErrors(newErrors)
     return Object.values(newErrors).every((error) => !error)
@@ -60,17 +64,25 @@ export function NewAcout() {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              error={errors.usernameOrEmail}
+              error={errors.username}
               id="outlined-nome"
-              name="usernameOrEmail"
-              label="Nome de usuario ou email"
-              value={values.usernameOrEmail}
+              name="username"
+              label="Nome de usuario"
+              value={values.username}
               onChange={handleChange}
-              helperText={
-                errors.usernameOrEmail
-                  ? 'Nome de usuario ou email obrigatórios.'
-                  : ''
-              }
+              helperText={errors.username ? 'Nome de usuario obrigatório.' : ''}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              error={errors.email}
+              id="outlined-email"
+              name="email"
+              label="E-mail"
+              value={values.email}
+              onChange={handleChange}
+              helperText={errors.email ? 'E-mail é obrigatórios.' : ''}
             />
           </Grid>
           <Grid item xs={12}>
@@ -78,7 +90,7 @@ export function NewAcout() {
               fullWidth
               error={errors.password}
               type="password"
-              id="filled-email"
+              id="filled-password"
               name="password"
               label="Senha"
               value={values.password}
@@ -87,7 +99,7 @@ export function NewAcout() {
             />
           </Grid>
           <Grid item xs={12}>
-            <Button fullWidth type="submit" variant="contained" sx={{ m: 1 }}>
+            <Button fullWidth type="submit" variant="contained">
               Enviar
             </Button>
           </Grid>

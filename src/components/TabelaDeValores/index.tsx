@@ -17,136 +17,44 @@ import {
   MenuItem,
   SelectChangeEvent,
   Card,
+  Typography,
 } from '@mui/material'
 import { ProductsList } from './style'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { Financa, FinancaAdd } from '../../models/tabelaGeral'
 import { formatCurrency, formatDate } from '../../functions'
 import { toast } from 'react-toastify'
-
-const finance: Financa[] = [
-  {
-    id: 1,
-    data: '2024-07-01',
-    categoria: 'Alimentação',
-    descricao: 'Supermercado XYZ',
-    tipo: 'Despesa',
-    valor: 650.0,
-    fixoVariavel: 'Variável',
-    observacoes: 'Compra mensal',
-  },
-  {
-    id: 2,
-    data: '2024-07-02',
-    categoria: 'Transporte',
-    descricao: 'Abastecimento carro',
-    tipo: 'Despesa',
-    valor: 200.0,
-    fixoVariavel: 'Variável',
-    observacoes: null,
-  },
-  {
-    id: 3,
-    data: '2024-07-03',
-    categoria: 'Lazer',
-    descricao: 'Cinema',
-    tipo: 'Despesa',
-    valor: 50.0,
-    fixoVariavel: 'Variável',
-    observacoes: null,
-  },
-  {
-    id: 4,
-    data: '2024-07-05',
-    categoria: 'Saúde',
-    descricao: 'Consulta médica',
-    tipo: 'Despesa',
-    valor: 100.0,
-    fixoVariavel: 'Variável',
-    observacoes: 'Plano de saúde',
-  },
-  {
-    id: 5,
-    data: '2024-07-07',
-    categoria: 'Salário',
-    descricao: 'Salário mensal',
-    tipo: 'Receita',
-    valor: 3000.0,
-    fixoVariavel: 'Fixo',
-    observacoes: null,
-  },
-  {
-    id: 6,
-    data: '2024-07-10',
-    categoria: 'Educação',
-    descricao: 'Curso online',
-    tipo: 'Despesa',
-    valor: 1000.0,
-    fixoVariavel: 'Parcela',
-    parcelas: 10,
-    observacoes: '10x de 100,00',
-  },
-  {
-    id: 7,
-    data: '2024-07-15',
-    categoria: 'Moradia',
-    descricao: 'Aluguel',
-    tipo: 'Despesa',
-    valor: 1200.0,
-    fixoVariavel: 'Fixo',
-    observacoes: null,
-  },
-  {
-    id: 8,
-    data: '2024-07-20',
-    categoria: 'Investimentos',
-    descricao: 'Aplicação em ações',
-    tipo: 'Receita',
-    valor: 500.0,
-    fixoVariavel: 'Variável',
-    observacoes: null,
-  },
-  {
-    id: 9,
-    data: '2024-07-22',
-    categoria: 'Alimentação',
-    descricao: 'Restaurante ABC',
-    tipo: 'Despesa',
-    valor: 80.0,
-    fixoVariavel: 'Variável',
-    observacoes: 'Almoço com amigos',
-  },
-  {
-    id: 10,
-    data: '2024-07-25',
-    categoria: 'Transporte',
-    descricao: 'Uber',
-    tipo: 'Despesa',
-    valor: 30.0,
-    fixoVariavel: 'Variável',
-    observacoes: 'Viagem de trabalho',
-  },
-]
+import { apiService } from '../../api/Requests'
 
 interface TabelaDeValoresProps {
   onTotalChange: (total: number) => void
+  finance: Financa[]
+  onAddFinance: () => void
 }
 
-export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
+export function TabelaDeValores({
+  onTotalChange,
+  finance,
+  onAddFinance,
+}: TabelaDeValoresProps) {
   const [page, setPage] = useState(0)
+  const [categorias, setCategorias] = useState<string>('')
+  const dataAtualFormatada = new Date().toISOString().split('T')[0]
+  const [novaCategoria, setNovaCategoria] = useState<string>('')
   const [pageSize, setPageSize] = useState(10)
   const [edit, setEdit] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null)
   const [myFinances, setFinances] = useState<Financa | null>(null)
   const [financeDelete, setFinanceDelete] = useState(false)
   const [financeAdd, setFinanceAdd] = useState(false)
   const [formValuesAdd, setFormValuesAdd] = useState<FinancaAdd>({
-    data: '',
+    data: dataAtualFormatada,
     categoria: '',
     descricao: '',
     tipo: 'Despesa',
     valor: null,
-    fixoVariavel: 'Variável',
-    parcelas: 0,
+    fixoVariavel: 'Variavel',
+    parcelas: undefined,
     observacoes: '',
   })
 
@@ -180,15 +88,28 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
     })
   }
 
+  const handleNovaCategoriaChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setNovaCategoria(event.target.value)
+
+    // Não altere diretamente o valor da categoria se estiver em "Outro"
+    setFormValuesAdd((prev) => ({
+      ...prev,
+      categoria: prev.categoria === 'Outro' ? 'Outro' : event.target.value,
+    }))
+  }
+
   const newFinanceAdd = () => {
+    userCategories()
     setFormValuesAdd({
-      data: '',
+      data: dataAtualFormatada,
       categoria: '',
       descricao: '',
       tipo: 'Despesa',
       valor: null,
-      fixoVariavel: 'Variável',
-      parcelas: 0,
+      fixoVariavel: 'Variavel',
+      parcelas: undefined,
       observacoes: '',
     })
     setFinanceAdd(true)
@@ -231,28 +152,12 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
     return valid
   }
 
-  // const [totalElements, setTotalElements] = useState(5)
-  // const [isLoading, setIsLoading] = useState(false)
-
-  // async function dadosCTE() {
-  //   setIsLoading(true)
-  //   try {
-  //     const response = await axios.get(
-  //       `/consulta-cte-geral/?page=${page}&size=${pageSize}`,
-  //     )
-  //     setTotalElements(response.data.totalElements)
-  //     setfinance(response.data.list)
-  //   } catch (error) {
-  //     console.error('Erro na requisição GET:', error)
-  //   } finally {
-  //     setIsLoading(false)
-  //   }
-  // }
-
   const calculateTotal = () => {
-    return finance.reduce((total, item) => {
-      return item.tipo === 'Receita' ? total + item.valor : total - item.valor
-    }, 0)
+    if (finance) {
+      return finance.reduce((total, item) => {
+        return item.tipo === 'Receita' ? total + item.valor : total - item.valor
+      }, 0)
+    }
   }
 
   const handelEdit = (item: Financa) => {
@@ -260,8 +165,8 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
     setEdit(true)
   }
   const handelDelete = (item: number) => {
+    setItemToDelete(item)
     setFinanceDelete(true)
-    console.log(item)
   }
 
   const handleChangePage = (
@@ -272,19 +177,22 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
   }
 
   const hendleSalveEdit = () => {
-    console.log(myFinances)
+    editFinance()
     setEdit(false)
   }
 
   const handleSaveAdd = () => {
     if (isFormValid()) {
-      const { ...otherValues } = formValuesAdd
-      const financeToSave =
-        formValuesAdd.fixoVariavel === 'Parcela'
-          ? { ...formValuesAdd }
-          : otherValues
+      const financeToSave = {
+        ...formValuesAdd,
+        // Use a nova categoria se estiver preenchendo um novo nome
+        categoria:
+          formValuesAdd.categoria === 'Outro'
+            ? novaCategoria
+            : formValuesAdd.categoria,
+      }
 
-      console.log('financeToSave', financeToSave)
+      newFinance(financeToSave)
       setFinanceAdd(false)
     } else {
       toast.warning('Por favor, preencha todos os campos obrigatórios.')
@@ -300,7 +208,18 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
-    setFinances((prev) => (prev ? { ...prev, [name!]: value as string } : null))
+
+    setFinances((prev) => {
+      if (!prev) return null
+
+      // Se for o campo "valor", substitua vírgula por ponto
+      const newValue = name === 'valor' ? value.replace(',', '.') : value
+
+      return {
+        ...prev,
+        [name]: newValue,
+      }
+    })
   }
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
@@ -308,33 +227,90 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
     setFinances((prev) => (prev ? { ...prev, [name!]: value } : null))
   }
 
-  // useEffect(() => {
-  //   dadosCTE()
-  // }, [page, pageSize])
+  async function userCategories() {
+    try {
+      const response = await apiService.get({
+        url: '/finances/categories',
+      })
+      setCategorias(response.data)
+    } catch (error) {
+      toast.error('Usuário não possui finanças')
+      throw error
+    }
+  }
+
+  async function newFinance(financeToSave: FinancaAdd) {
+    try {
+      const response = await apiService.post({
+        url: '/finances',
+        body: financeToSave,
+      })
+      toast.success(response.data)
+      onAddFinance()
+    } catch (error) {
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const err = error as { response: { data: string } }
+        if (err.response.data) {
+          toast.error(err.response.data)
+        }
+      }
+    }
+  }
+
+  async function deleteFinance(financeToSave: number) {
+    try {
+      await apiService.delete({
+        url: `/finances/${financeToSave}`,
+      })
+      toast.success('Finança deletada com sucesso')
+      onAddFinance()
+    } catch (error) {
+      toast.error('Algo de errado ao deletar')
+      throw error
+    }
+  }
+
+  async function editFinance() {
+    try {
+      await apiService.put({
+        url: `/finances/${myFinances?.id}`,
+        body: myFinances,
+      })
+      toast.success('Finança editada com sucesso.')
+      onAddFinance()
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
 
   useEffect(() => {
     const total = calculateTotal()
-    onTotalChange(total)
+    if (total) {
+      onTotalChange(total)
+    }
   }, [onTotalChange])
 
   return (
     <Box sx={{ margin: '1rem 0 1rem 0' }}>
-      {finance && (
+      <Grid container justifyContent="end" mb={1}>
+        <Grid item xs={3}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={newFinanceAdd}
+            sx={{
+              background: '#131921',
+              '&:hover': { background: '#232f3e' },
+            }}
+          >
+            Nova Finança
+          </Button>
+        </Grid>
+      </Grid>
+      {finance && finance?.length > 0 ? (
         <Box>
           <Grid container justifyContent="end" spacing={1}>
-            <Grid item xs={3}>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={newFinanceAdd}
-                sx={{
-                  background: '#131921',
-                  '&:hover': { background: '#232f3e' },
-                }}
-              >
-                Nova Finança
-              </Button>
-            </Grid>
             <Grid item xs={12}>
               <Card elevation={6} sx={{ borderRadius: '8px' }}>
                 <ProductsList>
@@ -409,6 +385,12 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
             </Grid>
           </Grid>
         </Box>
+      ) : (
+        <Box>
+          <Typography variant="h5" textAlign="center" mt={5}>
+            Usuario sem finanças adicionadas.
+          </Typography>
+        </Box>
       )}
       <Box>
         <Dialog open={edit}>
@@ -468,6 +450,7 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
                 <TextField
                   name="valor"
                   label="Valor (R$)"
+                  type="text"
                   fullWidth
                   onChange={handleInputChange}
                   value={myFinances?.valor || ''}
@@ -483,7 +466,7 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
                     onChange={handleSelectChange}
                   >
                     <MenuItem value="Fixo">Fixo</MenuItem>
-                    <MenuItem value="Variável">Variável</MenuItem>
+                    <MenuItem value="Variavel">Variável</MenuItem>
                     <MenuItem value="Parcela">Parcela</MenuItem>
                   </Select>
                 </FormControl>
@@ -561,7 +544,12 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
               <Grid item xs={3}>
                 <Button
                   variant="contained"
-                  onClick={() => setFinanceDelete(false)}
+                  onClick={() => {
+                    if (itemToDelete !== null) {
+                      deleteFinance(itemToDelete)
+                    }
+                    setFinanceDelete(false)
+                  }}
                   color="primary"
                 >
                   Confirmar
@@ -593,16 +581,43 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  name="categoria"
-                  label="Categoria"
-                  fullWidth
-                  value={formValuesAdd.categoria}
-                  onChange={handleInputChangeAdd}
-                  error={errors.categoria}
-                  helperText={errors.categoria ? 'Campo obrigatório' : ''}
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">
+                    Categoria
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="categoria"
+                    value={formValuesAdd.categoria || ''}
+                    label="Categoria"
+                    onChange={handleSelectChangeAdd}
+                  >
+                    {Array.isArray(categorias) &&
+                      categorias.map((categoria, index) => (
+                        <MenuItem key={index} value={categoria}>
+                          {categoria}
+                        </MenuItem>
+                      ))}
+                    <MenuItem value="Outro">Outro</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
+              {formValuesAdd.categoria === 'Outro' && (
+                <Grid item xs={12}>
+                  <TextField
+                    name="novaCategoria"
+                    label="Nova Categoria"
+                    fullWidth
+                    value={novaCategoria}
+                    onChange={handleNovaCategoriaChange}
+                    error={errors.categoria}
+                    helperText={
+                      errors.categoria ? 'Por favor, insira uma categoria' : ''
+                    }
+                  />
+                </Grid>
+              )}
               <Grid item xs={12}>
                 <TextField
                   name="descricao"
@@ -635,7 +650,7 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
                   label="Valor (R$)"
                   fullWidth
                   type="number"
-                  value={formValuesAdd.valor}
+                  value={formValuesAdd.valor ?? ''}
                   onChange={handleInputChangeAdd}
                   error={errors.valor}
                   helperText={errors.valor ? 'Campo obrigatório' : ''}
@@ -647,11 +662,11 @@ export function TabelaDeValores({ onTotalChange }: TabelaDeValoresProps) {
                   <Select
                     name="fixoVariavel"
                     label="Categoria Despesa"
-                    value={formValuesAdd.fixoVariavel}
+                    value={formValuesAdd.fixoVariavel || ''}
                     onChange={handleSelectChangeAdd}
                   >
                     <MenuItem value="Fixo">Fixo</MenuItem>
-                    <MenuItem value="Variável">Variável</MenuItem>
+                    <MenuItem value="Variavel">Variável</MenuItem>
                     <MenuItem value="Parcela">Parcela</MenuItem>
                   </Select>
                 </FormControl>

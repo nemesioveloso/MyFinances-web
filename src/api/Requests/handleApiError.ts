@@ -17,12 +17,6 @@ export const handleApiError = (error: unknown) => {
       } else {
         toast.warning('Ocorreu um erro na resposta da API')
       }
-    } else {
-      // Trate outros tipos de erro do Axios aqui
-      toast.error('Nenhuma resposta recebida do servidor')
     }
-  } else {
-    // Trate erros não-Axios aqui
-    toast.error('Ocorreu um erro desconhecido')
   }
 }

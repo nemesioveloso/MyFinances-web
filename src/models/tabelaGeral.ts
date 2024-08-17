@@ -5,7 +5,7 @@ export interface Financa {
   descricao: string
   tipo: 'Despesa' | 'Receita'
   valor: number
-  fixoVariavel: 'Fixo' | 'Variável' | 'Parcela'
+  fixoVariavel: 'Fixo' | 'Variavel' | 'Parcela'
   parcelas?: number
   observacoes: string | null
 }
@@ -16,7 +16,7 @@ export interface FinancaAdd {
   descricao: string
   tipo: 'Despesa' | 'Receita'
   valor: number | null
-  fixoVariavel: 'Fixo' | 'Variável' | 'Parcela'
+  fixoVariavel: 'Fixo' | 'Variavel' | 'Parcela'
   parcelas?: number
   observacoes?: string
 }

@@ -8,3 +8,17 @@ export const axiosInstance = axios.create({
   // Aqui você pode adicionar mais configurações padrões se necessário
   // headers: {'X-Custom-Header': 'foobar'}
 })
+
+// Adiciona um interceptor para incluir o token no cabeçalho Authorization
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  },
+)

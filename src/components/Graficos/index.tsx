@@ -12,7 +12,7 @@ import {
   ArcElement,
 } from 'chart.js'
 import { Financa } from '../../models/tabelaGeral'
-import { Card, Grid, Typography } from '@mui/material'
+import { Box, Card, Grid, Typography } from '@mui/material'
 import { transformDate } from '../../functions'
 
 Chart.register(
@@ -81,65 +81,69 @@ export const FinanceCharts: React.FC<FinanceChartsProps> = ({ finance }) => {
   }
 
   return (
-    <Grid container spacing={1} justifyContent="space-evenly">
-      <Grid item xs={12} sm={6} md={6} lg={6}>
-        <Card
-          elevation={6}
-          sx={{
-            borderRadius: '8px',
-          }}
-        >
-          <Grid container justifyContent="center">
-            <Grid item xs={12}>
-              <Typography variant="h6" textAlign="center">
-                Gráfico de Receita e Despesa do Último Mês
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
+    <Box>
+      {finance && finance?.length > 0 && (
+        <Grid container spacing={1} justifyContent="space-evenly">
+          <Grid item xs={12} sm={6} md={6} lg={6}>
+            <Card
+              elevation={6}
               sx={{
-                height: 'auto',
-                minHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+                borderRadius: '8px',
               }}
             >
-              <Pie data={dataPie} />
-            </Grid>
+              <Grid container justifyContent="center">
+                <Grid item xs={12}>
+                  <Typography variant="h6" textAlign="center">
+                    Gráfico de Receita e Despesa do Último Mês
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    height: 'auto',
+                    minHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Pie data={dataPie} />
+                </Grid>
+              </Grid>
+            </Card>
           </Grid>
-        </Card>
-      </Grid>
-      <Grid item xs={12} sm={6} md={6} lg={6}>
-        <Card
-          elevation={6}
-          sx={{
-            borderRadius: '8px',
-          }}
-        >
-          <Grid container justifyContent="center" alignItems="center">
-            <Grid item xs={12}>
-              <Typography variant="h6" textAlign="center">
-                Gráfico de Linha (Diferença Mensal)
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
+          <Grid item xs={12} sm={6} md={6} lg={6}>
+            <Card
+              elevation={6}
               sx={{
-                height: 'auto',
-                minHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+                borderRadius: '8px',
               }}
             >
-              <Line data={dataLine} />
-            </Grid>
+              <Grid container justifyContent="center" alignItems="center">
+                <Grid item xs={12}>
+                  <Typography variant="h6" textAlign="center">
+                    Gráfico de Linha (Diferença Mensal)
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    height: 'auto',
+                    minHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Line data={dataLine} />
+                </Grid>
+              </Grid>
+            </Card>
           </Grid>
-        </Card>
-      </Grid>
-    </Grid>
+        </Grid>
+      )}
+    </Box>
   )
 }

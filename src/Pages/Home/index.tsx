@@ -1,5 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
+// import { MyStepper } from '../../components/Stepper'
 
 export const Home = () => {
   return (
@@ -20,6 +21,9 @@ export const Home = () => {
             username ou email.
           </Typography>
         </Grid>
+        {/* <Grid item xs={12}>
+          <MyStepper />
+        </Grid> */}
       </Grid>
     </Box>
   )

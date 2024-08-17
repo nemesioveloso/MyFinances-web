@@ -4,7 +4,7 @@ import { handleApiError } from './handleApiError'
 
 type RequestParams = {
   url: string
-  body?: unknown[]
+  body?: unknown
 }
 
 export const apiService = {
