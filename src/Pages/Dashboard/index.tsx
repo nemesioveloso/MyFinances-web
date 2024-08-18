@@ -3,22 +3,38 @@ import { useEffect, useState } from 'react'
 import { TabelaDeValores } from '../../components/TabelaDeValores'
 import { formatCurrency } from '../../functions'
 import { FinanceCharts } from '../../components/Graficos'
-import { Financa } from '../../models/tabelaGeral'
+import { FinanceResponse } from '../../models/tabelaGeral'
 import { apiService } from '../../api/Requests'
 import { toast } from 'react-toastify'
 
 export function Dashboard() {
   const [total, setTotal] = useState(0)
-  const [finance, setFinance] = useState<Financa[]>()
+  const [finance, setFinance] = useState<FinanceResponse>()
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
 
   const handleTotalChange = (newTotal: number) => {
     setTotal(newTotal)
   }
 
+  const handleChangePage = (
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage)
+  }
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setPageSize(parseInt(event.target.value, 10))
+    setPage(0)
+  }
+
   async function financas() {
     try {
       const response = await apiService.get({
-        url: '/finances',
+        url: `/finances?page=${page}&size=${pageSize}`,
       })
       setFinance(response.data)
     } catch (error) {
@@ -29,7 +45,7 @@ export function Dashboard() {
 
   useEffect(() => {
     financas()
-  }, [])
+  }, [page, pageSize])
 
   return (
     <Box>
@@ -51,12 +67,22 @@ export function Dashboard() {
         <Grid item xs={12}>
           <TabelaDeValores
             onTotalChange={handleTotalChange}
-            finance={finance || []}
+            dados={
+              finance || {
+                size: 0,
+                totalPages: 0,
+                page: 0,
+                list: [],
+                totalElements: 0,
+              }
+            }
             onAddFinance={financas}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Grid>
         <Grid item xs={12}>
-          <FinanceCharts finance={finance || []} />
+          <FinanceCharts finance={finance?.list || []} />
         </Grid>
       </Grid>
     </Box>

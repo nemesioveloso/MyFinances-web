@@ -7,7 +7,7 @@ export interface Financa {
   valor: number
   fixoVariavel: 'Fixo' | 'Variavel' | 'Parcela'
   parcelas?: number
-  observacoes: string | null
+  observacoes?: string | null
 }
 
 export interface FinancaAdd {
@@ -19,4 +19,12 @@ export interface FinancaAdd {
   fixoVariavel: 'Fixo' | 'Variavel' | 'Parcela'
   parcelas?: number
   observacoes?: string
+}
+
+export interface FinanceResponse {
+  size: number
+  totalPages: number
+  page: number
+  list: Financa[]
+  totalElements: number
 }

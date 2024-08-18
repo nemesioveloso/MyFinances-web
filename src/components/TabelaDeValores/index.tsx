@@ -21,27 +21,38 @@ import {
 } from '@mui/material'
 import { ProductsList } from './style'
 import { ChangeEvent, useEffect, useState } from 'react'
-import { Financa, FinancaAdd } from '../../models/tabelaGeral'
+import { Financa, FinancaAdd, FinanceResponse } from '../../models/tabelaGeral'
 import { formatCurrency, formatDate } from '../../functions'
 import { toast } from 'react-toastify'
 import { apiService } from '../../api/Requests'
 
 interface TabelaDeValoresProps {
   onTotalChange: (total: number) => void
-  finance: Financa[]
+  dados: FinanceResponse
   onAddFinance: () => void
+  onPageChange: (
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => void
+  onRowsPerPageChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
 }
 
 export function TabelaDeValores({
   onTotalChange,
-  finance,
+  dados,
   onAddFinance,
+  onPageChange,
+  onRowsPerPageChange,
 }: TabelaDeValoresProps) {
-  const [page, setPage] = useState(0)
+  const finance: Financa[] = dados.list || []
+  const page = dados.page
+  const size = dados.size
+  const totalElements = dados.totalElements
   const [categorias, setCategorias] = useState<string>('')
   const dataAtualFormatada = new Date().toISOString().split('T')[0]
   const [novaCategoria, setNovaCategoria] = useState<string>('')
-  const [pageSize, setPageSize] = useState(10)
   const [edit, setEdit] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<number | null>(null)
   const [myFinances, setFinances] = useState<Financa | null>(null)
@@ -169,13 +180,6 @@ export function TabelaDeValores({
     setFinanceDelete(true)
   }
 
-  const handleChangePage = (
-    _event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
-  ) => {
-    setPage(newPage)
-  }
-
   const hendleSalveEdit = () => {
     editFinance()
     setEdit(false)
@@ -197,13 +201,6 @@ export function TabelaDeValores({
     } else {
       toast.warning('Por favor, preencha todos os campos obrigatórios.')
     }
-  }
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setPageSize(parseInt(event.target.value, 10))
-    setPage(0)
   }
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -294,7 +291,7 @@ export function TabelaDeValores({
   return (
     <Box sx={{ margin: '1rem 0 1rem 0' }}>
       <Grid container justifyContent="end" mb={1}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={4} md={3} lg={2}>
           <Button
             fullWidth
             variant="contained"
@@ -375,11 +372,12 @@ export function TabelaDeValores({
                     borderBottomRightRadius: '8px',
                   }}
                   component="div"
-                  count={finance.length}
+                  rowsPerPageOptions={[5, 10, 50, totalElements]}
+                  count={totalElements}
                   page={page}
-                  onPageChange={handleChangePage}
-                  rowsPerPage={pageSize}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  onPageChange={onPageChange}
+                  rowsPerPage={size}
+                  onRowsPerPageChange={onRowsPerPageChange}
                 />
               </Card>
             </Grid>
