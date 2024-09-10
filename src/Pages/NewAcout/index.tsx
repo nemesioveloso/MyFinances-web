@@ -3,6 +3,8 @@ import TextField from '@mui/material/TextField'
 import * as React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { axiosInstance } from '../../api'
+import { toast } from 'react-toastify'
 
 export function NewAcout() {
   const router = useNavigate()
@@ -34,14 +36,27 @@ export function NewAcout() {
     return Object.values(newErrors).every((error) => !error)
   }
 
+  const createUser = async () => {
+  
+    try {
+       await axiosInstance.post('/finances/users', values, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      toast.success('Usuário criado com sucesso:');
+      router('/')
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+    }
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (validateFields()) {
-      console.log('Formulário válido', values)
-      router('/')
-      // Envie os dados aqui
+      createUser()
     } else {
-      console.log('Formulário inválido')
+      toast.warning("Preencha todo os dados obrigatórios")
     }
   }
 

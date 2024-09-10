@@ -93,7 +93,7 @@ export const FinanceCharts: React.FC<FinanceChartsProps> = ({ finance }) => {
             >
               <Grid container justifyContent="center">
                 <Grid item xs={12}>
-                  <Typography variant="h6" textAlign="center">
+                  <Typography variant="h6" textAlign="center" mt={2}>
                     Gráfico de Receita e Despesa do Último Mês
                   </Typography>
                 </Grid>
@@ -102,6 +102,7 @@ export const FinanceCharts: React.FC<FinanceChartsProps> = ({ finance }) => {
                   xs={12}
                   sx={{
                     height: 'auto',
+                    maxHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
                     minHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
                     display: 'flex',
                     justifyContent: 'center',
@@ -122,7 +123,7 @@ export const FinanceCharts: React.FC<FinanceChartsProps> = ({ finance }) => {
             >
               <Grid container justifyContent="center" alignItems="center">
                 <Grid item xs={12}>
-                  <Typography variant="h6" textAlign="center">
+                  <Typography variant="h6" textAlign="center" mt={2}>
                     Gráfico de Linha (Diferença Mensal)
                   </Typography>
                 </Grid>
@@ -131,6 +132,7 @@ export const FinanceCharts: React.FC<FinanceChartsProps> = ({ finance }) => {
                   xs={12}
                   sx={{
                     height: 'auto',
+                    maxHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
                     minHeight: { xs: 310, sm: 400, md: 400, lg: 400 },
                     display: 'flex',
                     justifyContent: 'center',

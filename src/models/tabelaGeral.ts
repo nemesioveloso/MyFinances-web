@@ -13,6 +13,7 @@ export interface Financa {
 export interface FinancaAdd {
   data: string
   categoria: string
+  novaCategoria?: string
   descricao: string
   tipo: 'Despesa' | 'Receita'
   valor: number | null

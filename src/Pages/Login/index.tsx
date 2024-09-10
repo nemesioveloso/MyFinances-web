@@ -6,6 +6,7 @@ import { apiService } from '../../api/Requests'
 // import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { axiosInstance } from '../../api'
 
 interface AuthData {
   usernameOrEmail: string
@@ -48,16 +49,7 @@ export function Login() {
     }
   }
 
-  React.useEffect(() => {
-    if (token) {
-      localStorage.setItem('authToken', token)
-      setValues({
-        usernameOrEmail: '',
-        password: '',
-      })
-      router('/dashboard')
-    }
-  }, [token, router])
+  
 
   // async function validate(item) {
   //   // setIsLoading(true)
@@ -85,15 +77,28 @@ export function Login() {
     return Object.values(newErrors).every((error) => !error)
   }
 
+  const autenticate = async () => {  
+    try {
+      const response = await axiosInstance.post('/finances/users/authenticate', values, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const jwtToken = response.data.jwt;
+      localStorage.setItem('authToken',jwtToken )
+      router('/dashboard')
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+    }
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (validateFields()) {
-      console.log('Formulário válido', values)
       validate(values)
-      // router('/dashboard')
-      // Envie os dados aqui
+      autenticate()
     } else {
-      console.log('Formulário inválido')
+      toast.warning('Uername, email ou senha inválidas, tente novamente.')
     }
   }
 

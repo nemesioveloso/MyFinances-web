@@ -251,6 +251,8 @@ export function TabelaDeValores({
           toast.error(err.response.data)
         }
       }
+    } finally {
+      setNovaCategoria('')
     }
   }
 
@@ -334,7 +336,7 @@ export function TabelaDeValores({
                           <td>{item.tipo}</td>
                           <td>{formatCurrency(item.valor)}</td>
                           <td>{item.fixoVariavel}</td>
-                          <td>{item.parcelas}</td>
+                          <td>{item.parcelas || "-"}</td>
                           <td>{item.observacoes}</td>
                           <td>
                             <Grid container spacing={1}>

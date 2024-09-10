@@ -1,9 +1,10 @@
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Link, useNavigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { AppBar, Box, Grid, Toolbar, Typography } from '@mui/material'
 import { Router } from './routes/router'
 import './App.css'
 import 'react-toastify/dist/ReactToastify.css'
+import { LogoutButton } from './components/BotaoLogout'
 
 export const App = () => {
   return (
@@ -19,9 +20,18 @@ export const App = () => {
           <Grid item xs={12}>
             <AppBar position="fixed" sx={{ background: '#131921' }}>
               <Toolbar>
-                <Typography variant="h6" color="#f7f7f7" noWrap>
-                  My Finances
-                </Typography>
+                <Grid container justifyContent='space-between'>
+                  <Grid item xs={6} sm={4} md={3} lg={2}>
+                    <Typography variant="h6" noWrap>
+                      <Link to="/" style={{ textDecoration: 'none', color: '#f7f7f7' }}>
+                        My Finances
+                      </Link>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} sm={4} md={3} lg={2}>
+                    <LogoutButton />
+                  </Grid>
+                </Grid>
               </Toolbar>
             </AppBar>
           </Grid>
