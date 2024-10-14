@@ -28,6 +28,7 @@ import { apiService } from '../../api/Requests'
 
 interface TabelaDeValoresProps {
   onTotalChange: (total: number) => void
+  onTotalMonthChange: (total: number) => void
   dados: FinanceResponse
   onAddFinance: () => void
   onPageChange: (
@@ -40,6 +41,7 @@ interface TabelaDeValoresProps {
 }
 
 export function TabelaDeValores({
+  onTotalMonthChange,
   onTotalChange,
   dados,
   onAddFinance,
@@ -282,6 +284,42 @@ export function TabelaDeValores({
       throw error
     }
   }
+
+  // Função para pegar o mês e ano atual
+  const getCurrentMonthAndYear = () => {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0') // Ajusta para 2 dígitos
+    return `${year}-${month}`
+  }
+
+  // Função para calcular receitas e despesas do mês atual
+  const calculateCurrentMonthTotals = () => {
+    const currentMonth = getCurrentMonthAndYear()
+
+    const { receitaTotal, despesaTotal } = finance.reduce(
+      (totals, item) => {
+        if (item.data.startsWith(currentMonth)) {
+          if (item.tipo === 'Receita') {
+            totals.receitaTotal += item.valor
+          } else if (item.tipo === 'Despesa') {
+            totals.despesaTotal += item.valor
+          }
+        }
+        return totals
+      },
+      { receitaTotal: 0, despesaTotal: 0 } // Inicializando os totais
+    )
+
+    return { receitaTotal, despesaTotal }
+  }
+
+  useEffect(() => {
+    const { receitaTotal, despesaTotal } = calculateCurrentMonthTotals()
+    const saldoTotal = receitaTotal - despesaTotal
+    onTotalMonthChange(saldoTotal) // Passa o saldo total para o componente pai
+  }, [finance, onTotalMonthChange])
+
 
   useEffect(() => {
     const total = calculateTotal()

@@ -9,12 +9,19 @@ import { toast } from 'react-toastify'
 
 export function Dashboard() {
   const [total, setTotal] = useState(0)
+  const [totalMes, setTotalMes] = useState(0)
   const [finance, setFinance] = useState<FinanceResponse>()
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
 
+  console.log(totalMes);
+
+
   const handleTotalChange = (newTotal: number) => {
     setTotal(newTotal)
+  }
+  const handleTotalMonthChange = (newTotal: number) => {
+    setTotalMes(newTotal)
   }
 
   const handleChangePage = (
@@ -62,11 +69,13 @@ export function Dashboard() {
           <Typography variant="h5">My Finances Dasboard</Typography>
         </Grid>
         <Grid item xs={4} justifyContent="end">
-          <h3>Saldo/Debito Mensal: {formatCurrency(total)}</h3>
+          <h3>Saldo Total: {formatCurrency(total)}</h3>
+          <h3>Saldo/Debito Mensal: {formatCurrency(totalMes)}</h3>
         </Grid>
         <Grid item xs={12}>
           <TabelaDeValores
             onTotalChange={handleTotalChange}
+            onTotalMonthChange={handleTotalMonthChange}
             dados={
               finance || {
                 size: 0,
