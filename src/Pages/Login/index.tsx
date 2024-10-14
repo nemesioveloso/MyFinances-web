@@ -49,7 +49,7 @@ export function Login() {
     }
   }
 
-  
+
 
   // async function validate(item) {
   //   // setIsLoading(true)
@@ -77,7 +77,7 @@ export function Login() {
     return Object.values(newErrors).every((error) => !error)
   }
 
-  const autenticate = async () => {  
+  const autenticate = async () => {
     try {
       const response = await axiosInstance.post('/finances/users/authenticate', values, {
         headers: {
@@ -85,7 +85,7 @@ export function Login() {
         },
       });
       const jwtToken = response.data.jwt;
-      localStorage.setItem('authToken',jwtToken )
+      localStorage.setItem('authToken', jwtToken)
       router('/dashboard')
     } catch (error) {
       console.error('Erro ao criar usuário:', error);
@@ -148,7 +148,7 @@ export function Login() {
             />
           </Grid>
           <Grid item xs={12}>
-            <Button fullWidth type="submit" variant="contained" sx={{ m: 1 }}>
+            <Button fullWidth type="submit" variant="contained">
               Enviar
             </Button>
           </Grid>

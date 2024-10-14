@@ -14,9 +14,6 @@ export function Dashboard() {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
 
-  console.log(totalMes);
-
-
   const handleTotalChange = (newTotal: number) => {
     setTotal(newTotal)
   }
@@ -56,7 +53,7 @@ export function Dashboard() {
 
   return (
     <Box>
-      <Grid container alignItems="center">
+      <Grid container alignItems="center" justifyContent='space-between'>
         <Grid item xs={12}>
           <Typography variant="h5" textAlign="center">
             Dashboard
@@ -65,12 +62,12 @@ export function Dashboard() {
         <Grid item xs={12}>
           <hr style={{ margin: '1rem 0 1rem 0' }} />
         </Grid>
-        <Grid item xs={8}>
-          <Typography variant="h5">My Finances Dasboard</Typography>
+        <Grid item xs={12} sm={6} md={6} lg={3}>
+          <Typography variant="h5" sx={{ textAlign: { xs: 'center', sm: 'start', md: 'start' } }}>My Finances Dasboard</Typography>
         </Grid>
-        <Grid item xs={4} justifyContent="end">
-          <h3>Saldo Total: {formatCurrency(total)}</h3>
-          <h3>Saldo/Debito Mensal: {formatCurrency(totalMes)}</h3>
+        <Grid item xs={12} sm={6} md={6} lg={3}>
+          <Typography variant="h6" sx={{ textAlign: { xs: 'center', sm: 'end', md: 'end' } }}>Saldo Total: {formatCurrency(total)}</Typography>
+          <Typography variant="h6" sx={{ textAlign: { xs: 'center', sm: 'end', md: 'end' } }}>Saldo/Debito Mensal: {formatCurrency(totalMes)}</Typography>
         </Grid>
         <Grid item xs={12}>
           <TabelaDeValores
