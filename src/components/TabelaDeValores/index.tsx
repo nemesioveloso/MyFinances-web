@@ -105,8 +105,6 @@ export function TabelaDeValores({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setNovaCategoria(event.target.value)
-
-    // Não altere diretamente o valor da categoria se estiver em "Outro"
     setFormValuesAdd((prev) => ({
       ...prev,
       categoria: prev.categoria === 'Outro' ? 'Outro' : event.target.value,
@@ -189,7 +187,6 @@ export function TabelaDeValores({
     if (isFormValid()) {
       const financeToSave = {
         ...formValuesAdd,
-        // Use a nova categoria se estiver preenchendo um novo nome
         categoria:
           formValuesAdd.categoria === 'Outro'
             ? novaCategoria
@@ -208,8 +205,6 @@ export function TabelaDeValores({
 
     setFinances((prev) => {
       if (!prev) return null
-
-      // Se for o campo "valor", substitua vírgula por ponto
       const newValue = name === 'valor' ? value.replace(',', '.') : value
 
       return {
@@ -283,15 +278,13 @@ export function TabelaDeValores({
     }
   }
 
-  // Função para pegar o mês e ano atual
   const getCurrentMonthAndYear = () => {
     const today = new Date()
     const year = today.getFullYear()
-    const month = String(today.getMonth() + 1).padStart(2, '0') // Ajusta para 2 dígitos
+    const month = String(today.getMonth() + 1).padStart(2, '0')
     return `${year}-${month}`
   }
 
-  // Função para calcular receitas e despesas do mês atual
   const calculateCurrentMonthTotals = useCallback(() => {
     const currentMonth = getCurrentMonthAndYear()
 
@@ -315,7 +308,7 @@ export function TabelaDeValores({
   useEffect(() => {
     const { receitaTotal, despesaTotal } = calculateCurrentMonthTotals()
     const saldoTotal = receitaTotal - despesaTotal
-    onTotalMonthChange(saldoTotal) // Passa o saldo total para o componente pai
+    onTotalMonthChange(saldoTotal)
   }, [calculateCurrentMonthTotals, onTotalMonthChange])
 
   useEffect(() => {

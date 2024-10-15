@@ -63,7 +63,7 @@ export const FormCadastroClients: React.FC<FormCadastroClientsProps> = ({
       bairro: !values.bairro,
       senha: !values.senha,
       confirmarSenha: !values.confirmarSenha,
-      senhaMismatch, // Usando a propriedade abreviada conforme recomendado pelo ESLint
+      senhaMismatch,
     }
 
     setErrors(newErrors)
@@ -76,26 +76,6 @@ export const FormCadastroClients: React.FC<FormCadastroClientsProps> = ({
       console.log('Formulário válido', values)
       toast.success('Cadastro realizado com sucesso')
       handleNext()
-      // Envie os dados aqui
-      // try {
-      //   const response = await fetch('URL_DA_SUA_API', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify(values),
-      //   })
-
-      //   if (!response.ok) {
-      //     throw new Error('Erro na submissão')
-      //   }
-
-      //   const result = await response.json()
-      //   console.log('Sucesso:', result)
-      //   // Implemente ações após o sucesso
-      // } catch (error) {
-      //   console.error('Erro:', error)
-      // }
     } else {
       console.log('Formulário inválido', values)
       toast.warning(
@@ -229,7 +209,6 @@ export const FormCadastroClients: React.FC<FormCadastroClientsProps> = ({
                   InputProps={{
                     sx: {
                       'input[type="number"]': {
-                        // Aumentando a especificidade
                         '-moz-appearance': 'textfield',
                         '-webkit-appearance': 'none',
                         '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button':

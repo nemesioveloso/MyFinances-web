@@ -1,6 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
-// import { MyStepper } from '../../components/Stepper'
 
 export const Home = () => {
   return (
