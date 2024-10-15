@@ -1,4 +1,4 @@
-import { BrowserRouter, Link, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Link } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { AppBar, Box, Grid, Toolbar, Typography } from '@mui/material'
 import { Router } from './routes/router'
@@ -20,10 +20,13 @@ export const App = () => {
           <Grid item xs={12}>
             <AppBar position="fixed" sx={{ background: '#131921' }}>
               <Toolbar>
-                <Grid container justifyContent='space-between'>
+                <Grid container justifyContent="space-between">
                   <Grid item xs={6} sm={4} md={3} lg={2}>
                     <Typography variant="h6" noWrap>
-                      <Link to="/" style={{ textDecoration: 'none', color: '#f7f7f7' }}>
+                      <Link
+                        to="/"
+                        style={{ textDecoration: 'none', color: '#f7f7f7' }}
+                      >
                         My Finances
                       </Link>
                     </Typography>
