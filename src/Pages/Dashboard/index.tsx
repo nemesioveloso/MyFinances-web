@@ -1,5 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { TabelaDeValores } from '../../components/TabelaDeValores'
 import { formatCurrency } from '../../functions'
 import { FinanceCharts } from '../../components/Graficos'
@@ -35,7 +35,7 @@ export function Dashboard() {
     setPage(0)
   }
 
-  async function financas() {
+  const financas = useCallback(async () => {
     try {
       const response = await apiService.get({
         url: `/finances?page=${page}&size=${pageSize}`,
@@ -45,15 +45,15 @@ export function Dashboard() {
       toast.error('Usuário não possui finanças')
       throw error
     }
-  }
+  }, [page, pageSize])
 
   useEffect(() => {
     financas()
-  }, [page, pageSize])
+  }, [financas])
 
   return (
     <Box>
-      <Grid container alignItems="center" justifyContent='space-between'>
+      <Grid container alignItems="center" justifyContent="space-between">
         <Grid item xs={12}>
           <Typography variant="h5" textAlign="center">
             Dashboard
@@ -63,11 +63,26 @@ export function Dashboard() {
           <hr style={{ margin: '1rem 0 1rem 0' }} />
         </Grid>
         <Grid item xs={12} sm={6} md={6} lg={3}>
-          <Typography variant="h5" sx={{ textAlign: { xs: 'center', sm: 'start', md: 'start' } }}>My Finances Dasboard</Typography>
+          <Typography
+            variant="h5"
+            sx={{ textAlign: { xs: 'center', sm: 'start', md: 'start' } }}
+          >
+            My Finances Dasboard
+          </Typography>
         </Grid>
         <Grid item xs={12} sm={6} md={6} lg={3}>
-          <Typography variant="h6" sx={{ textAlign: { xs: 'center', sm: 'end', md: 'end' } }}>Saldo Total: {formatCurrency(total)}</Typography>
-          <Typography variant="h6" sx={{ textAlign: { xs: 'center', sm: 'end', md: 'end' } }}>Saldo/Debito Mensal: {formatCurrency(totalMes)}</Typography>
+          <Typography
+            variant="h6"
+            sx={{ textAlign: { xs: 'center', sm: 'end', md: 'end' } }}
+          >
+            Saldo Total: {formatCurrency(total)}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ textAlign: { xs: 'center', sm: 'end', md: 'end' } }}
+          >
+            Saldo/Debito Mensal: {formatCurrency(totalMes)}
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <TabelaDeValores

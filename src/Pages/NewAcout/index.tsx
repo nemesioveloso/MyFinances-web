@@ -37,26 +37,25 @@ export function NewAcout() {
   }
 
   const createUser = async () => {
-  
     try {
-       await axiosInstance.post('/finances/users', values, {
+      await axiosInstance.post('/finances/users', values, {
         headers: {
           'Content-Type': 'application/json',
         },
-      });
-      toast.success('Usuário criado com sucesso:');
+      })
+      toast.success('Usuário criado com sucesso:')
       router('/')
     } catch (error) {
-      console.error('Erro ao criar usuário:', error);
+      console.error('Erro ao criar usuário:', error)
     }
-  };
+  }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (validateFields()) {
       createUser()
     } else {
-      toast.warning("Preencha todo os dados obrigatórios")
+      toast.warning('Preencha todo os dados obrigatórios')
     }
   }
 

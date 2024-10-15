@@ -23,7 +23,6 @@ interface AuthResponse {
 
 export function Login() {
   const router = useNavigate()
-  const [token, setToken] = useState('')
   const [values, setValues] = useState({
     usernameOrEmail: '',
     password: '',
@@ -40,28 +39,12 @@ export function Login() {
         url: '/finances/users/authenticate',
         body: data,
       })
-
-      setToken(response.data.jwt)
       return response.data as AuthResponse
     } catch (error) {
       toast.error('Usuário ou senha inválidos')
       throw error
     }
   }
-
-
-
-  // async function validate(item) {
-  //   // setIsLoading(true)
-  //   try {
-  //     const response = await axiosInstance.post('/finances/users/authenticate')
-  //     console.log(response)
-  //   } catch (error) {
-  //     console.error('Erro na requisição GET:', error)
-  //   } finally {
-  //     // setIsLoading(false)
-  //   }
-  // }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -79,18 +62,22 @@ export function Login() {
 
   const autenticate = async () => {
     try {
-      const response = await axiosInstance.post('/finances/users/authenticate', values, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axiosInstance.post(
+        '/finances/users/authenticate',
+        values,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
-      const jwtToken = response.data.jwt;
+      )
+      const jwtToken = response.data.jwt
       localStorage.setItem('authToken', jwtToken)
       router('/dashboard')
     } catch (error) {
-      console.error('Erro ao criar usuário:', error);
+      console.error('Erro ao criar usuário:', error)
     }
-  };
+  }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()

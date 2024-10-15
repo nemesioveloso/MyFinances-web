@@ -20,7 +20,7 @@ import {
   Typography,
 } from '@mui/material'
 import { ProductsList } from './style'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { Financa, FinancaAdd, FinanceResponse } from '../../models/tabelaGeral'
 import { formatCurrency, formatDate } from '../../functions'
 import { toast } from 'react-toastify'
@@ -48,7 +48,7 @@ export function TabelaDeValores({
   onPageChange,
   onRowsPerPageChange,
 }: TabelaDeValoresProps) {
-  const finance: Financa[] = dados.list || []
+  const finance = useMemo(() => dados.list || [], [dados.list])
   const page = dados.page
   const size = dados.size
   const totalElements = dados.totalElements
@@ -165,13 +165,11 @@ export function TabelaDeValores({
     return valid
   }
 
-  const calculateTotal = () => {
-    if (finance) {
-      return finance.reduce((total, item) => {
-        return item.tipo === 'Receita' ? total + item.valor : total - item.valor
-      }, 0)
-    }
-  }
+  const calculateTotal = useCallback(() => {
+    return finance.reduce((total, item) => {
+      return item.tipo === 'Receita' ? total + item.valor : total - item.valor
+    }, 0)
+  }, [finance])
 
   const handelEdit = (item: Financa) => {
     setFinances(item)
@@ -294,7 +292,7 @@ export function TabelaDeValores({
   }
 
   // Função para calcular receitas e despesas do mês atual
-  const calculateCurrentMonthTotals = () => {
+  const calculateCurrentMonthTotals = useCallback(() => {
     const currentMonth = getCurrentMonthAndYear()
 
     const { receitaTotal, despesaTotal } = finance.reduce(
@@ -308,25 +306,24 @@ export function TabelaDeValores({
         }
         return totals
       },
-      { receitaTotal: 0, despesaTotal: 0 } // Inicializando os totais
+      { receitaTotal: 0, despesaTotal: 0 },
     )
 
     return { receitaTotal, despesaTotal }
-  }
+  }, [finance])
 
   useEffect(() => {
     const { receitaTotal, despesaTotal } = calculateCurrentMonthTotals()
     const saldoTotal = receitaTotal - despesaTotal
     onTotalMonthChange(saldoTotal) // Passa o saldo total para o componente pai
-  }, [finance, onTotalMonthChange])
-
+  }, [calculateCurrentMonthTotals, onTotalMonthChange])
 
   useEffect(() => {
     const total = calculateTotal()
     if (total) {
       onTotalChange(total)
     }
-  }, [onTotalChange])
+  }, [calculateTotal, onTotalChange])
 
   return (
     <Box sx={{ margin: '1rem 0 1rem 0' }}>
@@ -374,7 +371,7 @@ export function TabelaDeValores({
                           <td>{item.tipo}</td>
                           <td>{formatCurrency(item.valor)}</td>
                           <td>{item.fixoVariavel}</td>
-                          <td>{item.parcelas || "-"}</td>
+                          <td>{item.parcelas || '-'}</td>
                           <td>{item.observacoes}</td>
                           <td>
                             <Grid container spacing={1}>
